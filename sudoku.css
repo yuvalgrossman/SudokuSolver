@@ -1,0 +1,12 @@
+    .thick-border-left {
+        border-left-width: 3px;
+    }
+    .thick-border-right {
+        border-right-width: 3px;
+    }
+    .thick-border-top {
+        border-top-width: 3px;
+    }
+    .thick-border-bottom {
+        border-bottom-width: 3px;
+    }
