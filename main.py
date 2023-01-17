@@ -12,11 +12,64 @@ CORS(app)
 @app.route("/solve", methods=["POST"])
 def solve():
     data = request.get_json()["data"]
-    # print(data)
-    # here you can call your function to solve the sudoku
     solution = sudoku_solver(data)
     return json.dumps({"solution": solution})
 
+@app.route("/solve_step", methods=["POST"])
+def solve_step():
+    data = request.get_json()["data"]
+    solution = sudoku_solver(data, 1) #TODO: problem when hypothesis wrong
+    return json.dumps({"solution": solution})
+
+@app.route("/load_preset", methods=["POST"])
+def load_preset():
+    level = request.get_json()["preset"]
+    preset = {}
+    # medium:
+    preset['medium'] = [[1, 8, None, None, None, 4, 5, None, None],
+             [6, None, None, None, 1, 8, 4, None, None],
+             [None, None, None, 6, 7, None, None, None, None],
+             [None, None, 6, None, 4, None, 1, 5, None],
+             [8, None, None, None, 3, None, None, None, 7],
+             [None, 4, 5, None, 6, None, 8, None, None],
+             [None, None, None, None, 8, 6, None, None, None],
+             [None, None, 4, 7, 2, None, None, None, 8],
+             [None, None, 8, 1, None, None, None, 2, 4]]
+
+    # easy:
+    preset['easy'] = [[7, 8, None, 3, 9, None, 6, 4, 1],
+                     [None, None, None, 5, 1, None, None, None, 2],
+                     [2, 9, 1, 7, 4, None, 5, 8, None ],
+                     [None, None, None, None, 8, None, None, None, 6],
+                     [8, 5, None, None,  2, 4, None, None, None ],
+                     [None,  1, 3, None, None,  7, 4, None, None ],
+                     [None, None, None, None,  7, None,  8, 3, None ],
+                     [3, None, None, None, None,  1, None, None, None ],
+                     [None,  2, 8, None, None, None, None,  6, 7]]
+
+    # hard:
+    preset['hard'] = [[None, 7, None, None, 2, None, 1, None, None],
+                     [6, None, 3, None, None, None, None, None, None],
+                     [2, None, None, 3, None, None, 5, None, None],
+                     [None, None, None, None, 3, None, None, 6, None],
+                     [None, 6, 4, 7, None, None, None, 8, None],
+                     [None, 5, None, None, 9, None, None, 4, None],
+                     [None, 4, None, None, 7, None, 9, None, None],
+                     [None, 2, None, None, None, 8, None, 5, None],
+                     [None, None, None, None, None, None, None, None, None]]
+
+    # expert:
+    preset['expert'] = [[None, None, None, None, 9, None, 2, None, 3],
+                         [None, None, None, None, 3, None, None, None, 8],
+                         [None, None, None, 5, 7, 4, None, None, None],
+                         [None, None, 3, 6, None, None, None, None, None],
+                         [None, 9, None, None, None, 5, None, None, None],
+                         [None, 2, None, None, None, None, None, 6, 1],
+                         [7, None, 4, None, None, None, None, 3, None],
+                         [5, None, None, 9, None, None, 7, None, None],
+                         [None, None, None, None, None, None, 4, None, None]]
+
+    return json.dumps({"preset": preset[level]})
 
 def plot_soduko(soduko, title=''):
     plt.table(soduko, cellLoc='center', rowLoc='center', bbox=[0.05, 0.05, 0.9, 0.9]);
@@ -88,9 +141,10 @@ def do_iteration(hypothesis, opts, guess):
 
     return hypothesis, opts, changed, valid
 
-def sudoku_solver(input):
+def sudoku_solver(input, max_it_steps=1000, plot=False):
     multi = []
-    plot_soduko(input, 'input')
+    if plot:
+        plot_soduko(input, 'input')
     hypothesis = deepcopy(input)
     it_ctr = 0
     changed = True
@@ -107,59 +161,20 @@ def sudoku_solver(input):
             multi.append((hypothesis[1], deepcopy(opts)))
             hypothesis = hypothesis[0]
 
-        plot_soduko(hypothesis, it_ctr)
+        if plot:
+            plot_soduko(hypothesis, it_ctr)
         if changed or it_ctr<2:
             guess = False
         else:
             guess = True
 
+        if valid and changed and it_ctr>=max_it_steps:
+            return hypothesis
+
     return hypothesis
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # medium:
-    medium = [[1, 8, None, None, None, 4, 5, None, None],
-             [6, None, None, None, 1, 8, 4, None, None],
-             [None, None, None, 6, 7, None, None, None, None],
-             [None, None, 6, None, 4, None, 1, 5, None],
-             [8, None, None, None, 3, None, None, None, 7],
-             [None, 4, 5, None, 6, None, 8, None, None],
-             [None, None, None, None, 8, 6, None, None, None],
-             [None, None, 4, 7, 2, None, None, None, 8],
-             [None, None, 8, 1, None, None, None, 2, 4]]
-
-    # easy:
-    easy = [[7, 8, None, 3, 9, None, 6, 4, 1],
-             [None, None, None, 5, 1, None, None, None, 2],
-             [2, 9, 1, 7, 4, None, 5, 8, None],
-             [None, None, None, None, 8, None, None, None, 6],
-             [8, 5, None, None, 2, 4, None, None, None],
-             [None, 1, 3, None, None, 7, 4, None, None],
-             [None, None, None, None, 7, None, 8, 3, None],
-             [3, None, None, None, None, 1, None, None, None],
-             [None, 2, 8, None, None, None, None, 6, 7]]
-
-    # hard:
-    hard = [[None, 7, None, None, 2, None, 1, None, None],
-             [6, None, 3, None, None, None, None, None, None],
-             [2, None, None, 3, None, None, 5, None, None],
-             [None, None, None, None, 3, None, None, 6, None],
-             [None, 6, 4, 7, None, None, None, 8, None],
-             [None, 5, None, None, 9, None, None, 4, None],
-             [None, 4, None, None, 7, None, 9, None, None],
-             [None, 2, None, None, None, 8, None, 5, None],
-             [None, None, None, None, None, None, None, None, None]]
-
-    # expert:
-    expert = [[None, None, None, None, 9, None, 2, None, 3],
-             [None, None, None, None, 3, None, None, None, 8],
-             [None, None, None, 5, 7, 4, None, None, None],
-             [None, None, 3, 6, None, None, None, None, None],
-             [None, 9, None, None, None, 5, None, None, None],
-             [None, 2, None, None, None, None, None, 6, 1],
-             [7, None, 4, None, None, None, None, 3, None],
-             [5, None, None, 9, None, None, 7, None, None],
-             [None, None, None, None, None, None, 4, None, None]]
 
     # solve(easy)
     app.run(debug=True)
