@@ -1,0 +1,27 @@
+    table, tr, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+        }
+
+    body {
+      background-color: lightgreen;
+    }
+
+    input {
+        text-align: center;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .thick-border-left {
+        border-left-width: 5px;
+    }
+    .thick-border-right {
+        border-right-width: 5px;
+    }
+    .thick-border-top {
+        border-top-width: 5px;
+    }
+    .thick-border-bottom {
+        border-bottom-width: 5px;
+    }

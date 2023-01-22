@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 # import pandas as pd
 from copy import deepcopy
 import json
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -13,13 +13,13 @@ CORS(app)
 def solve():
     data = request.get_json()["data"]
     solution = sudoku_solver(data)
-    return json.dumps({"solution": solution})
+    return json.dumps({"sudoku": solution})
 
 @app.route("/solve_step", methods=["POST"])
 def solve_step():
     data = request.get_json()["data"]
     solution = sudoku_solver(data, 1) #TODO: problem when hypothesis wrong
-    return json.dumps({"solution": solution})
+    return json.dumps({"sudoku": solution})
 
 @app.route("/load_preset", methods=["POST"])
 def load_preset():
@@ -69,7 +69,7 @@ def load_preset():
                          [5, None, None, 9, None, None, 7, None, None],
                          [None, None, None, None, None, None, 4, None, None]]
 
-    return json.dumps({"preset": preset[level]})
+    return json.dumps({"sudoku": preset[level]})
 
 def plot_soduko(soduko, title=''):
     plt.table(soduko, cellLoc='center', rowLoc='center', bbox=[0.05, 0.05, 0.9, 0.9]);
@@ -173,8 +173,15 @@ def sudoku_solver(input, max_it_steps=1000, plot=False):
 
     return hypothesis
 
+# @app.route('/')
+# def root():
+#     base_sudoku = [[None]*9]*9
+#     sudoku1 = base_sudoku
+#     sudoku1[0][0]=2
+#     return render_template('sudoku.html') #, sudoku=json.dumps({"sudoku2": sudoku1}))
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
     # solve(easy)
-    app.run(debug=True)
+    app.run(host='localhost', port='5000', debug=True)

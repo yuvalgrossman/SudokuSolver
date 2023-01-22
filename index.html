@@ -1,156 +1,52 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="sudoku.css">
+<head>
+    <link type="text/css" rel="stylesheet" href="static/sudoku.css">
+    <script type = "text/javascript" src="static/sudoku.js"></script>
     <title>Sudoku Solver</title>
-    <style>
-        table, tr, td {
-          border: 1px solid black;
-          border-collapse: collapse;
-        }
-        .div {
-          text-align: center;
-        }
-    </style>
-  </head>
-  <body>
-  <center>
+</head>
+<body>
+<center>
     <select id="preset-select">
-      <option value="easy">easy</option>
-      <option value="medium">medium</option>
-      <option value="hard">hard</option>
-      <option value="expert">expert</option>
+        <option value="easy">easy</option>
+        <option value="medium">medium</option>
+        <option value="hard">hard</option>
+        <option value="expert">expert</option>
     </select>
-    <button onclick="loadPreset()">load</button>
-    <button onclick="location.reload()">clear</button>
+    <button onclick="load_preset2()">load</button>
+    <button onclick="show_sudoku()">clear</button>
 
     <table>
-    <script>
-    for(var i = 0; i < 9; i++) {
-        document.write("<tr>");
-        for(var j = 0; j < 9; j++) {
-            var classes = "";
-            if(j % 3 == 0) {
-                classes += " thick-border-left";
-            }
-            if(j == 8) {
-                classes += " thick-border-right";
-            }
-            if(i % 3 == 0) {
-                classes += " thick-border-top";
-            }
-            if(i == 8) {
-                classes += " thick-border-bottom";
-            }
-            document.write("<td class='" + classes + "'><input type='text' id='cell_" + i + "_" + j + "' size='1'></td>");
+        <script>
+            for (var i = 0; i < 9; i++) {
+                document.write("<tr>");
+                for (var j = 0; j < 9; j++) {
+                    var classes = "";
+                    if (j % 3 == 0) {
+                        classes += " thick-border-left";
+                    }
+                    if (j == 8) {
+                        classes += " thick-border-right";
+                    }
+                    if (i % 3 == 0) {
+                        classes += " thick-border-top";
+                    }
+                    if (i == 8) {
+                        classes += " thick-border-bottom";
+                    }
+                    document.write("<td class='" + classes + "'><input type='text' id='cell_" + i + "_" + j + "' size='1'></td>");
 
-        }
-        document.write("</tr>");
-    }
-    </script>
+                }
+                document.write("</tr>");
+            }
+        </script>
     </table>
-  <button onclick="solve_step()">solve step</button>
-  <button onclick="solve_all()">solve completely</button>
+    <button onclick="solve_step()">solve step</button>
+    <button onclick="solve_all()">solve completely</button>
     <br><br><br>
-  Written by <a href="mailto:gryuval@gmail.com">Yuval Grossman</a> (with some assistant from ChatGPT)
-  </center>
-
-  <script>
-    function solve_all() {
-    var data = [];
-    for(var i = 0; i < 9; i++) {
-        var row = [];
-        for(var j = 0; j < 9; j++) {
-            var cell = document.getElementById("cell_" + i + "_" + j);
-            if(cell.value.length == 0) {
-                row.push(null);
-            } else {
-                row.push(parseInt(cell.value));
-            }
-        }
-        data.push(row);
-    }
-    // document.write(data)
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:5000/solve", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-            console.log(response);
-            for(var i = 0; i < 9; i++) {
-                for(var j = 0; j < 9; j++) {
-                    var cell = document.getElementById("cell_" + i + "_" + j);
-                    cell.value = response.solution[i][j];
-                }
-            }
-        }
-    };
-    xhr.send(JSON.stringify({data: data}));
-    }
-
-    function solve_step() {
-    var data = [];
-    for(var i = 0; i < 9; i++) {
-        var row = [];
-        for(var j = 0; j < 9; j++) {
-            var cell = document.getElementById("cell_" + i + "_" + j);
-            if(cell.value.length == 0) {
-                row.push(null);
-            } else {
-                row.push(parseInt(cell.value));
-            }
-        }
-        data.push(row);
-    }
-    // document.write(data)
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:5000/solve_step", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-            console.log(response);
-            for(var i = 0; i < 9; i++) {
-                for(var j = 0; j < 9; j++) {
-                    var cell = document.getElementById("cell_" + i + "_" + j);
-                    cell.value = response.solution[i][j];
-                }
-            }
-        }
-    };
-    xhr.send(JSON.stringify({data: data}));
-    }
-
-
-  function loadPreset() {
-    var preset = document.getElementById("preset-select").value;
-    // Send the chosen preset to the Python function "load_preset"
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:5000/load_preset", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-            console.log(response);
-            for(var i = 0; i < 9; i++) {
-                for(var j = 0; j < 9; j++) {
-                    var cell = document.getElementById("cell_" + i + "_" + j);
-                    cell.value = response.preset[i][j];
-                }
-            }
-        }
-    };
-    xhr.send(JSON.stringify({preset: preset}));
-//     xhr.onreadystatechange = function() {
-//     if (xhr.readyState === 4 && xhr.status === 200) {
-//     var response = JSON.parse(xhr.responseText);
-
-//     }
-// };
-  }
-</script>
-  </body>
+    Built by <a href="mailto:gryuval@gmail.com">Yuval Grossman</a>
+</center>
+</body>
 </html>
 
 
