@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
     <link type="text/css" rel="stylesheet" href="static/sudoku.css">
@@ -13,8 +12,9 @@
         <option value="hard">hard</option>
         <option value="expert">expert</option>
     </select>
-    <button onclick="load_preset2()">load</button>
+    <button onclick="load_preset()">load</button>
     <button onclick="show_sudoku()">clear</button>
+    <br><br>
 
     <table>
         <script>
@@ -41,6 +41,7 @@
             }
         </script>
     </table>
+    <br>
     <button onclick="solve_step()">solve step</button>
     <button onclick="solve_all()">solve completely</button>
     <br><br><br>

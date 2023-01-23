@@ -21,7 +21,7 @@ def solve_step():
     solution = sudoku_solver(data, 1) #TODO: problem when hypothesis wrong
     return json.dumps({"sudoku": solution})
 
-@app.route("/load_preset", methods=["POST"])
+@app.route("/load_preset", methods=["POST", "GET"])
 def load_preset():
     level = request.get_json()["preset"]
     preset = {}
