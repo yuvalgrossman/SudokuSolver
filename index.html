@@ -34,7 +34,7 @@
                     if (i == 8) {
                         classes += " thick-border-bottom";
                     }
-                    document.write("<td class='" + classes + "'><input type='text' id='cell_" + i + "_" + j + "' size='1'></td>");
+                    document.write("<td class='" + classes + "'><input type='number' min='1' max='9' step='1' id='cell_" + i + "_" + j + "' size='1'></td>");
 
                 }
                 document.write("</tr>");
@@ -42,8 +42,9 @@
         </script>
     </table>
     <br>
-    <button onclick="solve_step()">solve step</button>
-    <button onclick="solve_all()">solve completely</button>
+    <button onclick="process_request('check')">check</button>
+    <button onclick="process_request('solve_step')">solve step</button>
+    <button onclick="process_request('solve_all')">solve completely</button>
     <br><br><br>
     Built by <a href="mailto:gryuval@gmail.com">Yuval Grossman</a> <br> January 2023
 </center>
