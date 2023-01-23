@@ -50,26 +50,34 @@ function solve_all() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             console.log(response);
-            show_sudoku(response.sudoku)
+            if (response.success_flag==true) {
+                show_sudoku(response.sudoku)
+            } else {
+                alert(response.out_msg)
+            }
         }
     };
     xhr.send(JSON.stringify({data: data}));
 };
 
-function solve_step() {
+function process_request(func_name) {
     var data = store_sudoku();
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/solve_step", true);
+    xhr.open("POST", "/"+func_name, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             console.log(response);
-            show_sudoku(response.sudoku)
+            show_sudoku(response.sudoku);
+            if (response.out_msg.length > 0) {
+                alert(response.out_msg)
+                }
+            }
         }
-    };
     xhr.send(JSON.stringify({data: data}));
-};
+    };
+
 
 function load_preset() {
     var preset_selection = document.getElementById("preset-select").value;
@@ -89,16 +97,16 @@ function load_preset() {
 };
 
 
-function load_preset2() {
-    var preset_selection = document.getElementById("preset-select").value;
-    // Send the chosen preset to the Python function "load_preset"
-    fetch("/load_preset",
-        {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({preset: preset_selection})
-        })
-        .then(response => response.json())
-        // .then(json => console.log(json))
-        .then(json => show_sudoku(json.sudoku, true))
-};
+// function load_preset2() {
+//     var preset_selection = document.getElementById("preset-select").value;
+//     // Send the chosen preset to the Python function "load_preset"
+//     fetch("/load_preset",
+//         {
+//             method: 'POST',
+//             headers: {'Content-Type': 'application/json'},
+//             body: JSON.stringify({preset: preset_selection})
+//         })
+//         .then(response => response.json())
+//         // .then(json => console.log(json))
+//         .then(json => show_sudoku(json.sudoku, true))
+// };

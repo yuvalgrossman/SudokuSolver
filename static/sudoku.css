@@ -12,10 +12,10 @@
     }
 
     input {
-        width: 90%;
-        height: 90%;
+        width: 7vmin;
+        height: 7vmin;
         text-align: center;
-        font-size: 5vmin;
+        font-size: 4vmin;
     }
 
     .thick-border-left {
