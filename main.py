@@ -173,12 +173,15 @@ def sudoku_solver(input, max_it_steps=1000, plot=False):
 
     return hypothesis
 
-# @app.route('/')
-# def root():
-#     base_sudoku = [[None]*9]*9
-#     sudoku1 = base_sudoku
-#     sudoku1[0][0]=2
-#     return render_template('sudoku.html') #, sudoku=json.dumps({"sudoku2": sudoku1}))
+@app.route('/')
+def root():
+    # base_sudoku = [[None]*9]*9
+    # sudoku1 = base_sudoku
+    # sudoku1[0][0]=2
+    # return render_template('sudoku.html') #, sudoku=json.dumps({"sudoku2": sudoku1}))
+    with open('index.html', 'r') as file:
+        ret = file.read()
+    return ret
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

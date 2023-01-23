@@ -15,11 +15,27 @@ function store_sudoku() {
     return data
 };
 
-function show_sudoku(data = Array(9).fill(null).map(() => Array(9).fill(null))) {
+function show_sudoku(data = Array(9).fill(null).map(() => Array(9).fill(null)), init = false) {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             var cell = document.getElementById("cell_" + i + "_" + j);
-            cell.value = data[i][j];
+            if (data[i][j]) {
+                if (cell.value.length == 1) {
+                    if (init == false) {
+                        cell.style.backgroundColor = "lightgray"
+                    }
+                } else {
+                    cell.value = data[i][j];
+                    if (init == true) {
+                        cell.style.backgroundColor = "gray"
+                    } else {
+                        cell.style.backgroundColor = "lightblue"
+                    }
+                }
+            } else {
+                cell.style.backgroundColor = "white"
+                cell.value = ""
+            }
         }
     }
     ;
@@ -63,11 +79,11 @@ function load_preset() {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify({preset: preset_selection}));
     xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        console.log(response);
-        show_sudoku(response.sudoku)
-    }
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response);
+            show_sudoku(response.sudoku, true)
+        }
     };
 };
 
@@ -75,10 +91,12 @@ function load_preset2() {
     var preset_selection = document.getElementById("preset-select").value;
     // Send the chosen preset to the Python function "load_preset"
     fetch("http://localhost:5000/load_preset",
-        {method: 'POST',
+        {
+            method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({preset: preset_selection})})
-    .then(response => response.json())
-    // .then(json => console.log(json))
-    .then(json => show_sudoku(json.sudoku))
-    };
+            body: JSON.stringify({preset: preset_selection})
+        })
+        .then(response => response.json())
+        // .then(json => console.log(json))
+        .then(json => show_sudoku(json.sudoku, true))
+};
