@@ -22,12 +22,12 @@ function show_sudoku(data = Array(9).fill(null).map(() => Array(9).fill(null)), 
             if (data[i][j]) {
                 if (cell.value.length == 1) {
                     if (init == false) {
-                        cell.style.backgroundColor = "lightgray"
+                        cell.style.backgroundColor = "gray"
                     }
                 } else {
                     cell.value = data[i][j];
                     if (init == true) {
-                        cell.style.backgroundColor = "lightgray"
+                        cell.style.backgroundColor = "gray"
                     } else {
                         cell.style.backgroundColor = "lightblue"
                     }

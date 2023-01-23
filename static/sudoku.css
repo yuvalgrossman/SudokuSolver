@@ -4,8 +4,8 @@
         text-align: center;
         }
     table {
-        width: 80%;
-        height: 70%;
+        width: 80vmin;
+        height: 80vmin;
     }
     body {
       background-color: lightgreen;
@@ -15,7 +15,7 @@
         width: 90%;
         height: 90%;
         text-align: center;
-        font-size: 3vmin;
+        font-size: 5vmin;
     }
 
     .thick-border-left {
@@ -32,11 +32,13 @@
     }
 
     button {
-        width: 20%;
-        height: 5%;
+        width: 30vmin;
+        height: 8vmin;
+        font-size: 3vmin;
     }
 
     select {
-        width: 10%;
-        height: 5%;
+        width: 20vmin;
+        height: 8vmin;
+        font-size: 3vmin;
     }
