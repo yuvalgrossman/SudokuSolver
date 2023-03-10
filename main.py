@@ -1,10 +1,19 @@
+import base64
+import io
+import cv2
+
 import numpy as np
 import matplotlib.pyplot as plt
 # import pandas as pd
 from copy import deepcopy
 import json
+from torchvision.transforms import ToTensor
+
+from PIL import Image
 from flask import Flask, request, render_template
 from flask_cors import CORS
+
+from detector.sudoku_detector import MultiClassifier
 
 app = Flask(__name__)
 CORS(app)
@@ -26,48 +35,48 @@ def load_preset():
     level = request.get_json()["preset"]
     preset = {}
     # medium:
-    preset['medium'] = [[1, 8, None, None, None, 4, 5, None, None],
-             [6, None, None, None, 1, 8, 4, None, None],
-             [None, None, None, 6, 7, None, None, None, None],
-             [None, None, 6, None, 4, None, 1, 5, None],
-             [8, None, None, None, 3, None, None, None, 7],
-             [None, 4, 5, None, 6, None, 8, None, None],
-             [None, None, None, None, 8, 6, None, None, None],
-             [None, None, 4, 7, 2, None, None, None, 8],
-             [None, None, 8, 1, None, None, None, 2, 4]]
+    preset['medium'] = [[1, 8, 0, 0, 0, 4, 5, 0, 0],
+             [6, 0, 0, 0, 1, 8, 4, 0, 0],
+             [0, 0, 0, 6, 7, 0, 0, 0, 0],
+             [0, 0, 6, 0, 4, 0, 1, 5, 0],
+             [8, 0, 0, 0, 3, 0, 0, 0, 7],
+             [0, 4, 5, 0, 6, 0, 8, 0, 0],
+             [0, 0, 0, 0, 8, 6, 0, 0, 0],
+             [0, 0, 4, 7, 2, 0, 0, 0, 8],
+             [0, 0, 8, 1, 0, 0, 0, 2, 4]]
 
     # easy:
-    preset['easy'] = [[7, 8, None, 3, 9, None, 6, 4, 1],
-                     [None, None, None, 5, 1, None, None, None, 2],
-                     [2, 9, 1, 7, 4, None, 5, 8, None ],
-                     [None, None, None, None, 8, None, None, None, 6],
-                     [8, 5, None, None,  2, 4, None, None, None ],
-                     [None,  1, 3, None, None,  7, 4, None, None ],
-                     [None, None, None, None,  7, None,  8, 3, None ],
-                     [3, None, None, None, None,  1, None, None, None ],
-                     [None,  2, 8, None, None, None, None,  6, 7]]
+    preset['easy'] = [[7, 8, 0, 3, 9, 0, 6, 4, 1],
+                     [0, 0, 0, 5, 1, 0, 0, 0, 2],
+                     [2, 9, 1, 7, 4, 0, 5, 8, None ],
+                     [0, 0, 0, 0, 8, 0, 0, 0, 6],
+                     [8, 5, 0, 0,  2, 4, 0, 0, None ],
+                     [0,  1, 3, 0, 0,  7, 4, 0, None ],
+                     [0, 0, 0, 0,  7, 0,  8, 3, None ],
+                     [3, 0, 0, 0, 0,  1, 0, 0, None ],
+                     [0,  2, 8, 0, 0, 0, 0,  6, 7]]
 
     # hard:
-    preset['hard'] = [[None, 7, None, None, 2, None, 1, None, None],
-                     [6, None, 3, None, None, None, None, None, None],
-                     [2, None, None, 3, None, None, 5, None, None],
-                     [None, None, None, None, 3, None, None, 6, None],
-                     [None, 6, 4, 7, None, None, None, 8, None],
-                     [None, 5, None, None, 9, None, None, 4, None],
-                     [None, 4, None, None, 7, None, 9, None, None],
-                     [None, 2, None, None, None, 8, None, 5, None],
-                     [None, None, None, None, None, None, None, None, None]]
+    preset['hard'] = [[0, 7, 0, 0, 2, 0, 1, 0, 0],
+                     [6, 0, 3, 0, 0, 0, 0, 0, 0],
+                     [2, 0, 0, 3, 0, 0, 5, 0, 0],
+                     [0, 0, 0, 0, 3, 0, 0, 6, 0],
+                     [0, 6, 4, 7, 0, 0, 0, 8, 0],
+                     [0, 5, 0, 0, 9, 0, 0, 4, 0],
+                     [0, 4, 0, 0, 7, 0, 9, 0, 0],
+                     [0, 2, 0, 0, 0, 8, 0, 5, 0],
+                     [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
     # expert:
-    preset['expert'] = [[None, None, None, None, 9, None, 2, None, 3],
-                         [None, None, None, None, 3, None, None, None, 8],
-                         [None, None, None, 5, 7, 4, None, None, None],
-                         [None, None, 3, 6, None, None, None, None, None],
-                         [None, 9, None, None, None, 5, None, None, None],
-                         [None, 2, None, None, None, None, None, 6, 1],
-                         [7, None, 4, None, None, None, None, 3, None],
-                         [5, None, None, 9, None, None, 7, None, None],
-                         [None, None, None, None, None, None, 4, None, None]]
+    preset['expert'] = [[0, 0, 0, 0, 9, 0, 2, 0, 3],
+                         [0, 0, 0, 0, 3, 0, 0, 0, 8],
+                         [0, 0, 0, 5, 7, 4, 0, 0, 0],
+                         [0, 0, 3, 6, 0, 0, 0, 0, 0],
+                         [0, 9, 0, 0, 0, 5, 0, 0, 0],
+                         [0, 2, 0, 0, 0, 0, 0, 6, 1],
+                         [7, 0, 4, 0, 0, 0, 0, 3, 0],
+                         [5, 0, 0, 9, 0, 0, 7, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 4, 0, 0]]
 
     return json.dumps({"sudoku": preset[level]})
 
@@ -173,15 +182,41 @@ def sudoku_solver(input, max_it_steps=1000, plot=False):
 
     return hypothesis
 
-# @app.route('/')
-# def root():
-#     base_sudoku = [[None]*9]*9
-#     sudoku1 = base_sudoku
-#     sudoku1[0][0]=2
-#     return render_template('sudoku.html') #, sudoku=json.dumps({"sudoku2": sudoku1}))
+@app.route('/')
+def root():
+    init_detector()
+    with open('index.html','r') as file:
+        ret = file.read()
+    return ret
+
+def init_detector():
+    global model
+    model = MultiClassifier('detector/digits_classifier.pth')
+
+def detect_img(image):
+    global model
+    # preproccess:
+    image = image.convert("L").resize((300, 300))
+    inputs = ToTensor()(image).unsqueeze(0)
+    inputs = 1 - inputs # we want the background black
+    outputs = model(inputs).to(int)[0,0]
+    return outputs.tolist()
+
+
+@app.route('/detect_sudoku', methods = ['GET', 'POST'])
+def detect_sudoku():
+    if request.method == 'POST':
+        response = request.get_json()['file']
+        response = response[response.find('base64,') + len('base64,'):]
+        base64_decoded = base64.b64decode(response)
+        image = Image.open(io.BytesIO(base64_decoded))
+        output = detect_img(image)
+
+        return json.dumps({"sudoku": output})
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
     # solve(easy)
-    app.run(host='localhost', port='5000', debug=True)
+    app.run(host='0.0.0.0', port='5000', debug=True)

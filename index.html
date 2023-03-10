@@ -2,11 +2,29 @@
 <html>
 <head>
     <link type="text/css" rel="stylesheet" href="static/sudoku.css">
-    <script type = "text/javascript" src="static/sudoku.js"></script>
+    <!--<script type="text/javascript" src="static/sudoku.js"></script>-->
     <title>Sudoku Solver</title>
 </head>
 <body>
 <center>
+
+    <!--    <form action="/upload_img" method="POST" enctype="multipart/form-data">
+            <input id="upload" type="file" name="file" accept="image/*">
+            <input type="submit" value="upload & show" onclick="test_upload()">
+            <input type="submit" value="detect objects" onclick="detect_objects()">
+        </form> -->
+    <input type="file" id="fileInput" name="file"/>
+    <img id="imageSrc" alt="No Image" hidden/>
+    <p>
+        Mark the Sudoku corners with 4 points in the following order: top-left, top-right,
+        bottom-right, bottom-left. Then press "detect"
+    </p>
+    <button onclick="clear_pts()">clear points</button>
+    <button onclick="detect_sudoku1()">detect</button>
+    <br>
+    <canvas id="imageCanvas"></canvas><br><br>
+
+
     <select id="preset-select">
         <option value="easy">easy</option>
         <option value="medium">medium</option>
@@ -15,7 +33,7 @@
     </select>
     <button onclick="load_preset2()">load</button>
     <button onclick="show_sudoku()">clear</button>
-
+    <br>
     <table>
         <script>
             for (var i = 0; i < 9; i++) {
@@ -46,6 +64,9 @@
     <br><br><br>
     Built by <a href="mailto:gryuval@gmail.com">Yuval Grossman</a>
 </center>
+
+<script src="static/script.js" type="text/javascript"></script>
+<script async src="static/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
 </body>
 </html>
 
