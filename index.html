@@ -8,11 +8,6 @@
 <body>
 <center>
 
-    <!--    <form action="/upload_img" method="POST" enctype="multipart/form-data">
-            <input id="upload" type="file" name="file" accept="image/*">
-            <input type="submit" value="upload & show" onclick="test_upload()">
-            <input type="submit" value="detect objects" onclick="detect_objects()">
-        </form> -->
     <input type="file" id="fileInput" name="file"/>
     <img id="imageSrc" alt="No Image" hidden/>
     <p>
@@ -33,7 +28,8 @@
     </select>
     <button onclick="load_preset2()">load</button>
     <button onclick="show_sudoku()">clear</button>
-    <br>
+    <br><br>
+
     <table>
         <script>
             for (var i = 0; i < 9; i++) {
@@ -52,17 +48,19 @@
                     if (i == 8) {
                         classes += " thick-border-bottom";
                     }
-                    document.write("<td class='" + classes + "'><input type='text' id='cell_" + i + "_" + j + "' size='1'></td>");
+                    document.write("<td class='" + classes + "'><input type='number' min='1' max='9' step='1' id='cell_" + i + "_" + j + "' size='1'></td>");
 
                 }
                 document.write("</tr>");
             }
         </script>
     </table>
-    <button onclick="solve_step()">solve step</button>
-    <button onclick="solve_all()">solve completely</button>
+    <br>
+    <button onclick="process_request('check')">check</button>
+    <button onclick="process_request('solve_step')">solve step</button>
+    <button onclick="process_request('solve_all')">solve completely</button>
     <br><br><br>
-    Built by <a href="mailto:gryuval@gmail.com">Yuval Grossman</a>
+    Built by <a href="mailto:gryuval@gmail.com">Yuval Grossman</a> <br> January 2023
 </center>
 
 <script src="static/script.js" type="text/javascript"></script>

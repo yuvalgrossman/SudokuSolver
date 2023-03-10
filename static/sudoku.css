@@ -1,16 +1,21 @@
     table, tr, td {
-          border: 1px solid black;
-          border-collapse: collapse;
+        border: 1px solid black;
+        border-collapse: collapse;
+        text-align: center;
         }
-
+    table {
+        width: 80vmin;
+        height: 80vmin;
+    }
     body {
       background-color: lightgreen;
     }
 
     input {
+        width: 7vmin;
+        height: 7vmin;
         text-align: center;
-        /*font-weight: bold;*/
-        /*font-size: 10px;*/
+        font-size: 4vmin;
     }
 
     .thick-border-left {
@@ -24,4 +29,16 @@
     }
     .thick-border-bottom {
         border-bottom-width: 5px;
+    }
+
+    button {
+        width: 30vmin;
+        height: 8vmin;
+        font-size: 3vmin;
+    }
+
+    select {
+        width: 20vmin;
+        height: 8vmin;
+        font-size: 3vmin;
     }
