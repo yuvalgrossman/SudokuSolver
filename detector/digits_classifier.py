@@ -88,13 +88,30 @@ class RandomEdgeLines:
 
         return x
 
+class RandomBackground:
+    """randomly add background to the image
+    operates on tensors"""
+    def __call__(self, x):
+        x[x==0] = torch.rand(1)/3
+        return x
+
+class RandomScratch: #TODO
+    """randomly add a scratch to the image
+    operates on tensors"""
+    def __call__(self, x):
+        return x
+
 
 def init_train():
     global trainloader, testloader
     transform = transforms.Compose(
         [transforms.Resize(32),
          transforms.ToTensor(),
-         RandomEdgeLines()])
+         RandomEdgeLines(),
+         RandomBackground()
+         # RandomAffine(degrees, translate=None, scale=None, shear=None, interpolation=<InterpolationMode.NEAREST: 'nearest'>, fill=0, fillcolor=None, resample=None),
+        # RandomErasing(p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False),
+    ])
     trainset = Digits(root='./data', train=True,
                       download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,

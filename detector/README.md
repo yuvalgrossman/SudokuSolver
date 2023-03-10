@@ -52,11 +52,11 @@ For example, the output for the above MNIST-based board was:
 [5, 0, 0, 0, 0, 8, 1, 0, 0],<br>
 [0, 0, 0, 7, 0, 2, 0, 0, 7]
 
-which succeed in 80/81 of the cells (3rd row in the end got 8 instead of 8), this is 98.8% accuracy. 
+which succeed in 80/81 of the cells (3rd row in the end got 8 instead of 4), this is 98.8% accuracy. 
 over a set of 10K such grids the accuracy was 99.0% (which is about 1/5 boards without any error, and 4/5 with one error)
 
 However, when testing a printed and hand-writen combined boards the accuracy drops to 92% and when testing printed only 
-it dops to 85%, which means if fails to classify printed digits correctly. 
+it drops to 85%, which means if fails to classify printed digits correctly. 
 Hence,  we need to train it on both hand-writen and printed digits.
 
 So we defined a new dataset which produce both hand-writen from MNIST and printed digits with some variance in size, 
@@ -65,8 +65,21 @@ Unfortunately, performance dropped dramatically. When we checked why, turns out 
 We related it to the edges of the cells which did not exist on the training data, so we add them by defining a new 
 augmentation class **RandomEdgeLines**. 
 
+![before](outputs/digit_before_transform.png)
+![before](outputs/digit2_before_transform.png)
+
+![RandomEdge](outputs/digit_RandomEdgeLines.png)
+![RandomEdge](outputs/digit2_RandomEdgeLines.png)
+
+That improved a little the performance: 
 mnist-based: 99.1%
 combined-mnist: 93%
 printed: 87%
 
 ## Infer raw image
+We notice that when trying to take real images, there are much more mistakes. To we add more transformes, trying to be more realistic. 
+
+RandomBackground: 
+
+![RandomBackground](outputs/digit_RandomBackground.png)
+![RandomBackground](outputs/digit2_RandomBackground.png)
