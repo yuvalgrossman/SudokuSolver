@@ -102,7 +102,7 @@ class RandomScratch: #TODO
         return x
 
 
-def init_train():
+def init_train_test():
     global trainloader, testloader
     transform = transforms.Compose(
         [transforms.Resize(32),
@@ -224,6 +224,8 @@ def test(model=None, device='cpu', verbose=True):
     # print(l[l!=p])
 
 if __name__ == "__main__":
-    # test()
-    init_train()
-    train(device='cuda')
+
+    init_train_test()
+    # train(device='cuda')
+
+    test()
