@@ -2,7 +2,6 @@
 <html>
 <head>
     <link type="text/css" rel="stylesheet" href="static/sudoku.css">
-    <!--<script type="text/javascript" src="static/sudoku.js"></script>-->
     <title>Sudoku Solver</title>
 </head>
 <body>
@@ -10,12 +9,8 @@
 
     <input type="file" id="fileInput" name="file"/>
     <img id="imageSrc" alt="No Image" hidden/>
-    <p>
-        Mark the Sudoku corners with 4 points in the following order: top-left, top-right,
-        bottom-right, bottom-left. Then press "detect"
-    </p>
     <button onclick="clear_pts()">clear points</button>
-    <button onclick="detect_sudoku1()">detect</button>
+    <button onclick="detect_sudoku()">detect</button>
     <br>
     <canvas id="imageCanvas"></canvas><br><br>
 
@@ -26,7 +21,7 @@
         <option value="hard">hard</option>
         <option value="expert">expert</option>
     </select>
-    <button onclick="load_preset2()">load</button>
+    <button onclick="load_preset()">load</button>
     <button onclick="show_sudoku()">clear</button>
     <br><br>
 
@@ -67,5 +62,3 @@
 <script async src="static/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
 </body>
 </html>
-
-
