@@ -279,4 +279,4 @@ def detect_sudoku():
 if __name__ == '__main__':
 
     # solve(easy)
-    app.run(host='0.0.0.0', port='5000', debug=True)
+    app.run(host='192.168.1.165', port='5000', debug=True)

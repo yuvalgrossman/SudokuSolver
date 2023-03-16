@@ -1,44 +1,100 @@
-    table, tr, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        text-align: center;
-        }
-    table {
-        width: 80vmin;
-        height: 80vmin;
-    }
-    body {
-      background-color: lightgreen;
-    }
+table, tr, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;
+}
 
-    input {
-        width: 7vmin;
-        height: 7vmin;
-        text-align: center;
-        font-size: 4vmin;
-    }
+table {
+    width: 80vmin;
+    height: 80vmin;
+}
 
-    .thick-border-left {
-        border-left-width: 5px;
-    }
-    .thick-border-right {
-        border-right-width: 5px;
-    }
-    .thick-border-top {
-        border-top-width: 5px;
-    }
-    .thick-border-bottom {
-        border-bottom-width: 5px;
-    }
+body {
+    background-color: lightgreen;
+}
 
-    button {
-        width: 30vmin;
-        height: 8vmin;
-        font-size: 3vmin;
-    }
+input {
+    width: 7vmin;
+    height: 7vmin;
+    text-align: center;
+    font-size: 4vmin;
+}
 
-    select {
-        width: 20vmin;
-        height: 8vmin;
-        font-size: 3vmin;
-    }
+.thick-border-left {
+    border-left-width: 5px;
+}
+
+.thick-border-right {
+    border-right-width: 5px;
+}
+
+.thick-border-top {
+    border-top-width: 5px;
+}
+
+.thick-border-bottom {
+    border-bottom-width: 5px;
+}
+
+button {
+    width: 30vmin;
+    height: 8vmin;
+    font-size: 3vmin;
+}
+
+select {
+    width: 20vmin;
+    height: 8vmin;
+    font-size: 3vmin;
+}
+
+input[type="file"] {
+    width: 50vmin;
+    /*height: 20vmin;*/
+    font-size: 3vmin;
+    border: 5px solid black;
+}
+
+label {
+    width: 50vmin;
+    height: 8vmin;
+    font-size: 3vmin;
+    border: 1px solid black;
+    background: #ededed;
+    padding: 20px;
+    /*margin-top: 100px;*/
+}
+
+/*.custom-file-input::-webkit-file-upload-button {*/
+/*    visibility: hidden;*/
+/*}*/
+
+/*.custom-file-input::before {*/
+/*    width: 500px;*/
+/*    height: 8vmin;*/
+/*    content: 'upload image with sudoku';*/
+/*    display: inline-block;*/
+/*    background: #ededed;*/
+/*    border: 1px solid #020101;*/
+/*    border-radius: 3px;*/
+/*    padding: 5px 8px;*/
+/*    outline: none;*/
+/*    white-space: nowrap;*/
+/*    -webkit-user-select: none;*/
+/*    cursor: pointer;*/
+/*    text-shadow: 1px 1px #fff;*/
+/*    font-weight: 700;*/
+/*    font-size: 3vmin;*/
+/*}*/
+
+/*.custom-file-input:hover::before {*/
+/*    border-color: black;*/
+/*}*/
+
+/*.custom-file-input:active::before {*/
+/*    background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);*/
+/*}*/
+
+/*canvas {*/
+/*    width: 100px;*/
+/*}*/

@@ -7,13 +7,12 @@
 <body>
 <center>
 
-    <input type="file" id="fileInput" name="file"/>
+    <input type="file" id="fileInput" hidden="hidden">
+    <label for="fileInput">select file to upload</label><br><br><br>
     <img id="imageSrc" alt="No Image" hidden/>
+    <canvas id="imageCanvas"></canvas><br>
     <button onclick="clear_pts()">clear points</button>
-    <button onclick="detect_sudoku()">detect</button>
-    <br>
-    <canvas id="imageCanvas"></canvas><br><br>
-
+    <button onclick="detect_sudoku()">detect</button><br><br>
 
     <select id="preset-select">
         <option value="easy">easy</option>
