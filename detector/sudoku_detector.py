@@ -1,3 +1,4 @@
+import sys
 import os.path
 import cv2
 import torch
@@ -6,6 +7,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import ToTensor
+from torchvision.models.resnet import ResNet, BasicBlock
+from torch import nn
+import torch.nn.functional as F
+from digits_classifier import SimpleClassifier
 
 class GridNums(Dataset):
     def __init__(self, source_path):
@@ -29,8 +34,7 @@ class GridNums(Dataset):
 
         return (grid, nums, img_name)
 
-from torch import nn
-import torch.nn.functional as F
+
 
 class NaiveGridDetector(nn.Module):
     def __init__(self):
@@ -48,7 +52,7 @@ class NaiveGridDetector(nn.Module):
         x = self.pool(F.relu(self.conv4(x)))
         return x
 
-from torchvision.models.resnet import ResNet, BasicBlock
+
 
 class ResnetDetector(ResNet):
     def __init__(self):
@@ -75,7 +79,7 @@ class ResnetDetector(ResNet):
         x = nn.functional.softmax(x, 1)
         return x
 
-from digits_classifier import SimpleClassifier
+
 class MultiClassifier(nn.Module):
     def __init__(self, PATH = 'digits_classifier.pth'):
         super().__init__()
