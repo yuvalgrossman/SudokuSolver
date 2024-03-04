@@ -251,7 +251,7 @@ def root():
 
 def init_detector():
     global model
-    model = MultiClassifier('detector/digits_classifier.pth')
+    model = MultiClassifier('detector/digits_classifier_augmentations.pth')
 
 def detect_img(image):
     global model

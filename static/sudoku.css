@@ -14,11 +14,15 @@ body {
 }
 
 input {
-    width: 7vmin;
-    height: 7vmin;
+    width: 6vmin;
+    height: 6vmin;
     text-align: center;
     font-size: 4vmin;
+    background-color: #ffffff;
 }
+/*input:hover {*/
+/*    background-color: #a1cece;*/
+/*}*/
 
 .thick-border-left {
     border-left-width: 5px;
@@ -60,10 +64,19 @@ label {
     height: 8vmin;
     font-size: 3vmin;
     border: 1px solid black;
-    background: #ededed;
+    background: #EDEDEDFF;
+    font-family: Helvetica;
+
     padding: 20px;
     /*margin-top: 100px;*/
 }
+label:hover{
+    background: #c8c8c8;
+}
+
+/*input[type="submit"].btn:hover {*/
+/*  border: 1px solid black;*/
+/*}*/
 
 /*.custom-file-input::-webkit-file-upload-button {*/
 /*    visibility: hidden;*/

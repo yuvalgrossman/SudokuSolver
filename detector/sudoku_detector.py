@@ -1,5 +1,4 @@
 import os.path
-
 import cv2
 import torch
 import glob
@@ -76,22 +75,22 @@ class ResnetDetector(ResNet):
         x = nn.functional.softmax(x, 1)
         return x
 
-from .digits_classifier import SimpleClassifier
+from digits_classifier import SimpleClassifier
 class MultiClassifier(nn.Module):
     def __init__(self, PATH = 'digits_classifier.pth'):
         super().__init__()
         self.classifier = SimpleClassifier()
         self.classifier.load_state_dict(torch.load(PATH))
-        self.conv1 = nn.Conv2d(1, 6, 45)
-        self.conv1.weights = self.classifier.conv1.weight.repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
-        self.conv2 = nn.Conv2d(6, 16, 45)
-        self.conv2.weights = self.classifier.conv2.weight.repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
-        # self.fc1 = nn.Linear(16 * 5 * 5, 120)
-        # self.fc1 = self.classifier.fc1.weight.unsqueeze(2).unsqueeze(3).repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
-        # self.fc2 = self.classifier.fc2.weight.unsqueeze(2).unsqueeze(3).repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
-        # self.fc3 = self.classifier.fc3.weight.unsqueeze(2).unsqueeze(3).repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
-
-        self.pool = nn.MaxPool2d(2, 2)
+        # self.conv1 = nn.Conv2d(1, 6, 45)
+        # self.conv1.weights = self.classifier.conv1.weight.repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
+        # self.conv2 = nn.Conv2d(6, 16, 45)
+        # self.conv2.weights = self.classifier.conv2.weight.repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
+        # # self.fc1 = nn.Linear(16 * 5 * 5, 120)
+        # # self.fc1 = self.classifier.fc1.weight.unsqueeze(2).unsqueeze(3).repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
+        # # self.fc2 = self.classifier.fc2.weight.unsqueeze(2).unsqueeze(3).repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
+        # # self.fc3 = self.classifier.fc3.weight.unsqueeze(2).unsqueeze(3).repeat_interleave(9, dim=2).repeat_interleave(9, dim=3)
+        #
+        # self.pool = nn.MaxPool2d(2, 2)
 
     def forward(self, x):
         # x = self.conv1(x)
@@ -167,13 +166,13 @@ def train():
     PATH = './naive_grid_detector.pth'
     torch.save(model.state_dict(), PATH)
 
-def test():
-    dataset = GridNums('data/GridNums/printed/test')
+def test(model_weights='digits_classifier.pth'):
+    # dataset = GridNums('data/GridNums/printed/test')
     # dataset = GridNums('data/GridNums/mnist_based/test')
-    # dataset = GridNums('data/GridNums/combine_mnist/test')
+    dataset = GridNums('data/GridNums/combine_mnist/test')
     testloader = DataLoader(dataset, batch_size=1000, shuffle=False)
 
-    model = MultiClassifier()
+    model = MultiClassifier(model_weights)
     accuracy = []
 
     for i, data in enumerate(testloader):
@@ -197,11 +196,12 @@ def infer(image):
     outputs = model(inputs)
     return outputs
 
+
 if __name__ == "__main__":
-    # test()
+    test(model_weights='digits_classifier_augmentations.pth')
     # train()
 
     # img = cv2.imread('data/soduko.png')
-    img = cv2.imread('data/ex1.jpeg')
-    print(infer(img))
+    # img = cv2.imread('data/ex1.jpeg')
+    # print(infer(img))
 

@@ -76,6 +76,7 @@ mnist-based: 99.1%
 combined-mnist: 93%
 printed: 87%
 
+
 ## Infer raw image
 We notice that when trying to take real images, there are much more mistakes. To we add more transformes, trying to be more realistic. 
 
@@ -83,3 +84,12 @@ RandomBackground:
 
 ![RandomBackground](outputs/digit_RandomBackground.png)
 ![RandomBackground](outputs/digit2_RandomBackground.png)
+
+as shown in [augmentation notebook](augmentations.ipynb)
+with 100 epochs of training
+
+![Digits_training_w_edges_augmentations.png](outputs%2FDigits_training_w_edges_augmentations.png)
+
+mnist-based: 99.2%
+combined-mnist: 99.0%
+printed: 98.8%

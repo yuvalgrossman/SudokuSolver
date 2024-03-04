@@ -5,12 +5,12 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import torchvision
-from torchvision import transforms
+from torchvision import transforms as T
 from PIL import Image
 import cv2
 
-batch_size = 1000
-num_epochs = 50
+batch_size = 1024
+num_epochs = 100
 
 class MNIST19wEmpty(torchvision.datasets.MNIST):
     def __getitem__(self, index):
@@ -47,15 +47,15 @@ class Digits(MNIST19wEmpty):
             return super().__getitem__(index)
         else:
             # produce a digit:
-            img = np.zeros([28, 28], 'int8')
+            img = np.zeros([28, 28], 'uint8')
             digit = int((index-len(self.data))/10000)+1
-            ind_x = img.shape[1]//3 + np.random.randint(-5, 5)
-            ind_y = img.shape[0]*2//3 + np.random.randint(-3, 3)
-            text_size = np.random.random()*1.5+0.5
-            gray_level = np.random.randint(200, 255)
-            thickness = np.random.randint(1,2)
+            ind_x = img.shape[1]//6 #+ np.random.randint(-5, 5)
+            ind_y = img.shape[0]*5//6 #+ np.random.randint(-3, 3)
+            text_size = 2 #np.random.random()*1.5+0.5
+            gray_level = 255 #np.random.randint(250, 255)
+            thickness = np.random.randint(1, 4)
             cv2.putText(img, str(digit), (ind_x, ind_y), 1, text_size, gray_level, thickness);
-            # plt.imshow(img);plt.show()
+            # plt.imshow(img);plt.colorbar();plt.show()
 
             img = Image.fromarray(img, mode='L')
 
@@ -93,6 +93,15 @@ class RandomBackground:
     operates on tensors"""
     def __call__(self, x):
         x[x==0] = torch.rand(1)/3
+        # x = torchvision.transforms.functional.gaussian_blur(x, 3)
+        return x
+
+class RandomBrightness:
+    """randomly add background to the image
+    operates on tensors"""
+    def __call__(self, x):
+        factor = 1-torch.rand(1)/3
+        x *= factor
         return x
 
 class RandomScratch: #TODO
@@ -104,14 +113,15 @@ class RandomScratch: #TODO
 
 def init_train_test():
     global trainloader, testloader
-    transform = transforms.Compose(
-        [transforms.Resize(32),
-         transforms.ToTensor(),
+    transform = T.Compose(
+        [T.Resize(32),
+         T.ToTensor(),
+         T.RandomAffine(degrees=20, scale=(0.5, 1), translate=(0.2, 0.2)),
+         RandomBrightness(),
+         T.RandomErasing(p=0.1, scale=(0.02, 0.1), ratio=(0.3, 3.3), value=0, inplace=False),
+         RandomBackground(),
          RandomEdgeLines(),
-         RandomBackground()
-         # RandomAffine(degrees, translate=None, scale=None, shear=None, interpolation=<InterpolationMode.NEAREST: 'nearest'>, fill=0, fillcolor=None, resample=None),
-        # RandomErasing(p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False),
-    ])
+         ])
     trainset = Digits(root='./data', train=True,
                       download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
@@ -136,16 +146,35 @@ class SimpleClassifier(nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
+        # self.pool = nn.MaxPool(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 10)
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+        x = F.max_pool2d(F.relu(self.conv1(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv2(x)), 2)
         x = torch.flatten(x, 1) # flatten all dimensions except batch
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+class SimpleNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 6, 5)
+        # self.conv2 = nn.Conv2d(6, 16, 5)
+        # self.fc1 = nn.Linear(16 * 5 * 5, 120)
+        self.fc1 = nn.Linear(6 * 14 * 14, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 10)
+
+    def forward(self, x):
+        # x = F.relu(self.conv(x))
+        x = F.max_pool2d(F.relu(self.conv1(x)), 2)
+        x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -187,7 +216,7 @@ def train(device='cpu'):
         test_accuracy.append(test(model))
 
     print('Finished Training')
-    PATH = 'digits_classifier.pth'
+    PATH = 'digits_classifier_augmentations.pth'
     torch.save(model.state_dict(), PATH)
 
     plt.plot(test_accuracy);
@@ -195,13 +224,13 @@ def train(device='cpu'):
     plt.ylabel('test accuracy')
     plt.title('Digits Classifier Training')
     plt.grid()
-    plt.savefig('outputs/Digits_training_w_edges.png')
+    plt.savefig('outputs/Digits_training_w_edges_augmentations.png')
 
 def test(model=None, device='cpu', verbose=True):
 
     if model is None:
         model = SimpleClassifier()
-        PATH = 'digits_classifier.pth'
+        PATH = 'digits_classifier_augmentations.pth'
         model.load_state_dict(torch.load(PATH))
 
     model = model.to(device)
@@ -225,7 +254,9 @@ def test(model=None, device='cpu', verbose=True):
 
 if __name__ == "__main__":
 
-    init_train_test()
+    # init_train_test()
     # train(device='cuda')
-
-    test()
+    # test()
+    model = SimpleNN()
+    input = torch.zeros([1,1,32,32])
+    model(input)
