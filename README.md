@@ -13,4 +13,4 @@
   - [ ] train deeper models
 - general: 
   - [ ] run all code on browser using JS rather on server using python
-  - [ ] deploy to app engine[SudokuSolver_demo.mp4](..%2F..%2FVideos%2FSudokuSolver_demo.mp4)
+  - [ ] deploy to app engine
